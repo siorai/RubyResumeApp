@@ -1,6 +1,6 @@
 require 'json'
 require 'net/http'
-require 'prawn'
+#require 'prawn'
 
 class Resume
   attr_reader :contact
