@@ -1,5 +1,7 @@
 require 'json'
 require 'net/http'
+require 'optparse'
+require 'ostruct'
 #require 'prawn'
 
 class Resume
@@ -97,8 +99,20 @@ end
 
 # console testing
 if __FILE__  == $0
-  cli_uri = URI(ARGV[0])
-  imported_resume = JSON.parse(Net::HTTP.get(cli_uri))
+  options = OpenStruct.new
+  OptionParser.new do |opt|
+    opt.on('-s', '--server SERVER URL', 'The server URL') { |o| options.server_url = o}
+    opt.on('-u', '--user USERNAME', 'The username given') { |o| options.username = o}
+    opt.on('-p', '--password PASSWORD', 'The password for user') { |o| options.password = o}
+  end.parse!
+  cli_uri = URI(options.server_url)
+  http = Net::HTTP.new(cli_uri.host, 443)
+  http.use_ssl = true
+  request = Net::HTTP::Get.new(cli_uri.request_uri)
+  request["Accept"] = "application/json"
+  request.basic_auth(options.username, options.password)
+  response = http.request(request)
+  imported_resume = JSON.parse(response.body)
   resumeImport = Resume.new(imported_resume)
   puts resumeImport   
   resumeImport.contact.params.each do |info|
