@@ -110,6 +110,7 @@ if __FILE__  == $0
   http.use_ssl = true
   request = Net::HTTP::Get.new(cli_uri.request_uri)
   request["Accept"] = "application/json"
+  request['Content-Type'] = 'application/json'
   request.basic_auth(options.username, options.password)
   response = http.request(request)
   imported_resume = JSON.parse(response.body)
