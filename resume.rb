@@ -2,14 +2,22 @@ require 'json'
 require 'net/http'
 require 'optparse'
 require 'ostruct'
-#require 'prawn'
 
 class Resume
-  attr_reader :contact
+  attr_reader :contact, :experience, :skills, :projects
 
   def initialize(resume)
     @contact = ContactInfo.new(resume['basic_info'])
-    @experience = Experience.new(resume['experience'])
+    @experience = []
+    resume['experience'].each do |exp|
+      self.experience.append(Experience.new(exp))
+    end
+    @projects = []
+    resume['projects'].each do |proj|
+      self.projects.append(Projects.new(proj))
+    end
+    @skills = Skills.new(resume['skills'])
+
 
   end
 
@@ -48,6 +56,7 @@ class ContactInfo
   # @raise [ExistingMethodError] Raise error if key matches existing method
   # @return [Object] Object containing a parameter for each key, value pair 
   def initialize(attributes)
+      
     attributes.each do |attr, value|
       if self.respond_to? attr # Raises error if any keys match existing methods
         raise ExistingMethodError, "Key '#{attr}' matches existing method cannot use."
@@ -70,19 +79,23 @@ class ContactInfo
   
 end
 
+class Experience < ContactInfo
 
+end
 
+class Skills < ContactInfo
+  
+end
 
-# @TODO 
-class Experience
-  attr_accessor :experience
+class Projects < ContactInfo
+end
+
+class Education < ContactInfo
+  attr_accessor :education
 
   # Object containing all the jobs
 
-  def initialize(experience)
-    @jobs = []
 
-  end
 end   
 
 
@@ -118,11 +131,58 @@ if __FILE__  == $0
   response = http.request(request)
   imported_resume = JSON.parse(response.body)
   resumeImport = Resume.new(imported_resume)
-  puts resumeImport   
+  puts <<EOS
+  Contact Info:
+  =============
+  
+EOS
   resumeImport.contact.params.each do |info|
-    puts "Info for #{info} is"
-    puts resumeImport.contact.send(info)
+    puts <<EOS
+    #{resumeImport.contact.send(info)}
+EOS
   end
+  puts <<EOS
+  
+  Projects:
+  =========
+EOS
+  resumeImport.projects.each do |proj|
+    puts <<EOS
+
+    #{proj.name} - #{proj.url}
+      - #{proj.description}
+EOS
+  end
+  puts <<EOS
+
+  Experience:
+  ===========
+EOS
+  resumeImport.experience.each do |exp|
+    if exp.year_ended.nil?
+      exp.year_ended = "Current"
+    end
+    puts <<EOS
+
+    #{exp.job_title} at #{exp.company} from #{exp.year_started} to #{exp.year_ended}
+      - #{exp.description}
+EOS
+  end
+  puts <<EOS
+
+  Skills:
+  =======
+EOS
+  resumeImport.skills.params.each do |cat|
+    puts <<EOS
+
+    #{cat.capitalize}:
+
+      #{resumeImport.skills.send(cat) * ", "}
+
+EOS
+  end
+
  
 end
 
