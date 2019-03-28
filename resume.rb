@@ -7,7 +7,7 @@ class Resume
   attr_reader :contact, :experience, :skills, :projects, :education
 
   def initialize(resume)
-    @contact = ContactInfo.new(resume['basic_info'])
+    @contact = Contact.new(resume['basic_info'])
     @experience = []
     resume['experience'].each do |exp|
       self.experience.push(Experience.new(exp))
@@ -30,8 +30,7 @@ class Resume
 end
 
 
-# Constructs ContactInfo Object from supplied hash
-class ContactInfo
+class Objectified
   attr_reader :params, :values
 
 
@@ -85,24 +84,25 @@ class ContactInfo
   
 end
 
-class Experience < ContactInfo
+class Experience < Objectified
 
 end
 
-class Skills < ContactInfo
+class Skills < Objectified
   
 end
 
-class Projects < ContactInfo
+class Projects < Objectified
+
 end
 
-class Education < ContactInfo
-  attr_accessor :education
-
+class Education < Objectified
 
 end   
 
+class Contact < Objectified
 
+end
 
 class ExistingMethodError < SecurityError
   def initialize(message)
