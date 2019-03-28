@@ -4,7 +4,7 @@ require 'optparse'
 require 'ostruct'
 
 class Resume
-  attr_reader :contact, :experience, :skills, :projects
+  attr_reader :contact, :experience, :skills, :projects, :education
 
   def initialize(resume)
     @contact = ContactInfo.new(resume['basic_info'])
@@ -17,9 +17,15 @@ class Resume
       self.projects.append(Projects.new(proj))
     end
     @skills = Skills.new(resume['skills'])
+    @education = []
+    resume['education'].each do |edu|
+      self.education.append(Education.new(edu))
+    end
 
 
   end
+
+  
 
 end
 
@@ -93,15 +99,10 @@ end
 class Education < ContactInfo
   attr_accessor :education
 
-  # Object containing all the jobs
-
 
 end   
 
 
-# @TODO
-#class Skills
-  # Skills Object - To take 
 
 class ExistingMethodError < SecurityError
   def initialize(message)
@@ -112,6 +113,8 @@ end
 
 # @TODO
 # Build linkedin integreation
+
+ 
 
 # console testing
 if __FILE__  == $0
@@ -155,6 +158,18 @@ EOS
   end
   puts <<EOS
 
+  Education:
+  ==========
+EOS
+  resumeImport.education.each do |edu|
+  puts <<EOS
+
+    #{edu.course_name} at #{edu.school_name} in #{edu.year}
+EOS
+  end
+
+  puts <<EOS
+
   Experience:
   ===========
 EOS
@@ -185,4 +200,3 @@ EOS
 
  
 end
-
