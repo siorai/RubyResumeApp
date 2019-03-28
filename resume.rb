@@ -97,6 +97,9 @@ class ExistingMethodError < SecurityError
 end
 
 
+# @TODO
+# Build linkedin integreation
+
 # console testing
 if __FILE__  == $0
   options = OpenStruct.new
