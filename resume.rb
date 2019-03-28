@@ -10,16 +10,16 @@ class Resume
     @contact = ContactInfo.new(resume['basic_info'])
     @experience = []
     resume['experience'].each do |exp|
-      self.experience.append(Experience.new(exp))
+      self.experience.push(Experience.new(exp))
     end
     @projects = []
     resume['projects'].each do |proj|
-      self.projects.append(Projects.new(proj))
+      self.projects.push(Projects.new(proj))
     end
     @skills = Skills.new(resume['skills'])
     @education = []
     resume['education'].each do |edu|
-      self.education.append(Education.new(edu))
+      self.education.push(Education.new(edu))
     end
 
 
