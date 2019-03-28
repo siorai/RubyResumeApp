@@ -8,7 +8,7 @@ At the moment, usage is just a simple
 
 ## About
 
-This app is just a simple Ruby app for printing out resumes to terminal.
+This is just a simple Ruby app for printing out my resume to the terminal.
 
 Currently is done through basic authentication using the above syntax.
 
